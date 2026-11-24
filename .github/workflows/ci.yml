@@ -13,7 +13,7 @@ jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -41,9 +41,9 @@ jobs:
       - name: Skip notice
         if: env.CORE_READ_TOKEN == ''
         run: echo "::warning::CORE_READ_TOKEN is not set, so the web/mobile shared-logic check was skipped."
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         if: env.CORE_READ_TOKEN != ''
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         if: env.CORE_READ_TOKEN != ''
         with:
           repository: growgift/growgift-core
