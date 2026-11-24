@@ -1,0 +1,13 @@
+{
+  "source": "growgift-core",
+  "note": "These files are the single source of truth in growgift-core/frontend/lib. Never edit the copies in src/lib directly: change them in the website, then run `npm run sync:pull`.",
+  "files": [
+    { "web": "frontend/lib/giftStatus.ts", "mobile": "src/lib/giftStatus.ts" },
+    { "web": "frontend/lib/trading.ts", "mobile": "src/lib/trading.ts" },
+    { "web": "frontend/lib/portfolio.ts", "mobile": "src/lib/portfolio.ts" },
+    { "web": "frontend/lib/brokerageGate.ts", "mobile": "src/lib/brokerageGate.ts" },
+    { "web": "frontend/lib/collections.ts", "mobile": "src/lib/collections.ts" },
+    { "web": "frontend/lib/billing.ts", "mobile": "src/lib/billing.ts" },
+    { "web": "frontend/lib/redemption.ts", "mobile": "src/lib/redemption.ts" }
+  ]
+}

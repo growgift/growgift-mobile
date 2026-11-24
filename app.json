@@ -31,6 +31,8 @@
       "expo-router",
       "expo-secure-store",
       "expo-web-browser",
+      ["expo-local-authentication", { "faceIDPermission": "GrowGift uses Face ID to unlock the app." }],
+      "@sentry/react-native",
       [
         "expo-camera",
         {

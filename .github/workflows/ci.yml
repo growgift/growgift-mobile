@@ -4,6 +4,11 @@ on:
     branches: [develop, staging, main]
   pull_request:
     branches: [develop, staging, main]
+permissions:
+  contents: read
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   check:
     runs-on: ubuntu-latest
@@ -16,7 +21,39 @@ jobs:
       - run: npm ci --legacy-peer-deps
       - run: npm run typecheck
       - run: npm test
+      - name: Dependency audit (fails on high or critical in shipped code)
+        run: npm audit --omit=dev --audit-level=high
       - name: Bundle check (iOS and Android)
+        env:
+          EXPO_PUBLIC_API_BASE: https://api.example.com/api/v1
+          EXPO_PUBLIC_WEB_BASE: https://www.example.com
         run: |
           npx expo export --platform ios --output-dir /tmp/ios
           npx expo export --platform android --output-dir /tmp/android
+
+  # Fails when the shared business logic differs from the website.
+  # Needs a repository secret CORE_READ_TOKEN: a fine-grained token with read-only "Contents" access to growgift-core.
+  shared-logic-sync:
+    runs-on: ubuntu-latest
+    env:
+      CORE_READ_TOKEN: ${{ secrets.CORE_READ_TOKEN }}
+    steps:
+      - name: Skip notice
+        if: env.CORE_READ_TOKEN == ''
+        run: echo "::warning::CORE_READ_TOKEN is not set, so the web/mobile shared-logic check was skipped."
+      - uses: actions/checkout@v4
+        if: env.CORE_READ_TOKEN != ''
+      - uses: actions/checkout@v4
+        if: env.CORE_READ_TOKEN != ''
+        with:
+          repository: growgift/growgift-core
+          ref: ${{ github.base_ref || github.ref_name }}
+          token: ${{ secrets.CORE_READ_TOKEN }}
+          path: _core
+          sparse-checkout: frontend/lib
+      - uses: actions/setup-node@v4
+        if: env.CORE_READ_TOKEN != ''
+        with:
+          node-version: 22
+      - if: env.CORE_READ_TOKEN != ''
+        run: node scripts/sync-shared.mjs --check _core

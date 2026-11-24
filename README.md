@@ -63,6 +63,17 @@ You need an Apple Developer account (iOS) and a Google Play Console account (And
 - Stripe and Apple/Google rules: gifts of shares and subscriptions are purchased on Stripe's hosted pages. Have the in-app purchase rules reviewed before submission, because Apple and Google can require their own billing for some digital goods.
 - Walk through every flow on real devices against the staging backend.
 
+## Staying in sync with the website
+
+Shared business logic is copied from `growgift-core/frontend/lib` and guarded by CI. See `docs/WEB_MOBILE_SYNC.md`. Quick version: change it in the website first, then `npm run sync:pull ../growgift-core`.
+
+## Monitoring and security options
+
+- Crash reporting (Sentry) is off until you set `EXPO_PUBLIC_SENTRY_DSN`. Events are scrubbed: no request bodies, tokens, emails or gift codes.
+- Face ID / fingerprint lock: Profile screen, shown when the phone supports it. Locks after 60 seconds in the background.
+- Screenshots and recording are blocked while a redemption code is on screen.
+- Release builds refuse to start if the API address is not `https://`.
+
 ## Branches
 
 `develop` (daily work) → `staging` → `main` (production), promoted by pull request only. See `docs/GIT_WORKFLOW.md`.

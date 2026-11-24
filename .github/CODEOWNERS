@@ -1,0 +1,8 @@
+# Replace @growgift/engineering with your real GitHub team or usernames.
+*                       @growgift/engineering
+/src/lib/api.ts         @growgift/engineering
+/src/lib/storage.ts     @growgift/engineering
+/src/lib/session.tsx    @growgift/engineering
+/shared.manifest.json   @growgift/engineering
+/eas.json               @growgift/engineering
+/.github/               @growgift/engineering

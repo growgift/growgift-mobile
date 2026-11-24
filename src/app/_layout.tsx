@@ -1,9 +1,25 @@
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { ActivityIndicator, View } from "react-native";
+import { ActivityIndicator, Text, View } from "react-native";
+import { Button } from "../components/ui";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { AppLockProvider } from "../lib/appLock";
+import { initMonitoring, reportError, wrapRoot } from "../lib/monitoring";
 import { SessionProvider, useSession } from "../lib/session";
 import { colors } from "../lib/theme";
+
+initMonitoring();
+
+export function ErrorBoundary({ error, retry }: { error: Error; retry: () => void }) {
+  reportError(error);
+  return (
+    <View style={{ flex: 1, alignItems: "center", justifyContent: "center", padding: 32, backgroundColor: colors.canvas, gap: 16 }}>
+      <Text style={{ fontSize: 20, fontWeight: "700", color: colors.ink }}>Something went wrong</Text>
+      <Text style={{ color: colors.ink, textAlign: "center" }}>Please try again. If it keeps happening, restart the app.</Text>
+      <Button title="Try again" onPress={retry} />
+    </View>
+  );
+}
 
 function Routes() {
   const { ready, session } = useSession();
@@ -44,13 +60,17 @@ function Routes() {
   );
 }
 
-export default function RootLayout() {
+function RootLayout() {
   return (
     <SafeAreaProvider>
       <SessionProvider>
-        <StatusBar style="dark" />
-        <Routes />
+        <AppLockProvider>
+          <StatusBar style="dark" />
+          <Routes />
+        </AppLockProvider>
       </SessionProvider>
     </SafeAreaProvider>
   );
 }
+
+export default wrapRoot(RootLayout);

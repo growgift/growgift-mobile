@@ -1,5 +1,6 @@
 import * as WebBrowser from "expo-web-browser";
-import { useCallback, useState } from "react";
+import * as ScreenCapture from "expo-screen-capture";
+import { useCallback, useEffect, useState } from "react";
 import { Share } from "react-native";
 import { useFocusEffect } from "expo-router";
 import { Banner, Button, Card, H1, H2, Loading, mono, P, Row, Screen } from "../../components/ui";
@@ -17,6 +18,14 @@ export default function MyGifts() {
   const [codes, setCodes] = useState<Record<string, string>>({});
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
+
+  // While a redemption code is on screen, block screenshots and screen recording.
+  const showingCode = Object.keys(codes).length > 0;
+  useEffect(() => {
+    if (!showingCode) return;
+    ScreenCapture.preventScreenCaptureAsync("codes").catch(() => {});
+    return () => { ScreenCapture.allowScreenCaptureAsync("codes").catch(() => {}); };
+  }, [showingCode]);
 
   const load = useCallback(async () => {
     setError(null);
