@@ -28,6 +28,8 @@ One React Native (Expo) app for **iOS and Android** that talks to the GrowGift g
 
 ## Run it locally
 
+Full step-by-step guide: [`docs/LOCAL_SETUP.md`](docs/LOCAL_SETUP.md). Short version:
+
 1. Start the backend (see `growgift-core`, *Local Setup Guide*).
 2. Install: `npm install --legacy-peer-deps` (Node 22).
 3. Copy `.env.example` to `.env` and set the API address for where you are running:
