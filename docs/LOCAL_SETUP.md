@@ -29,7 +29,9 @@ git checkout develop
 npm install --legacy-peer-deps
 ```
 
-`--legacy-peer-deps` is needed because of a peer-dependency conflict in the Expo toolchain. It is safe here.
+`--legacy-peer-deps` is needed because of a peer-dependency conflict in the Expo toolchain. It is safe here, and the repo's `.npmrc` sets it for you, so plain `npm install` and `npm ci` also work. `.nvmrc` pins Node 22 (`nvm use`).
+
+**Do not upgrade packages by hand.** The versions in `package.json` and `package-lock.json` are a matched set for Expo SDK 58. Avoid `npm update`, `npm install <pkg>@latest` and a bare `npx expo install --fix` on a working checkout; they can leave Expo and React Native on different SDK generations (see the first row of the troubleshooting table). Add packages with `npx expo install <package>`. SDK upgrades are done deliberately, on their own branch.
 
 Keep `growgift-mobile` and `growgift-core` as sibling folders. The sync check in section 8 expects `../growgift-core`.
 
@@ -145,6 +147,9 @@ Business rules shared with the website (gift status wording, trading maths, port
 
 | Symptom | Likely cause | Fix |
 |---|---|---|
+| `Package subpath './src/lib/TerminalReporter' is not defined by "exports" in .../metro/package.json` when running `npx expo start` | `node_modules` does not match `package.json`: for example an older `expo` (SDK 52) installed next to React Native 0.88 and Metro 0.87, usually after `npm update`, `@latest` installs or `expo install --fix` | Do not downgrade packages. Throw away the local install and rebuild it from the repo: `git checkout -- package.json package-lock.json`, `rm -rf node_modules`, `npm ci`, then `npx expo start -c`. Check with `npm ls expo` (must show `expo@58.x`) |
+| `npm warn install-scripts … @sentry/cli postinstall blocked` | npm 12 blocks install scripts by default | Harmless for running the app. Only needed for uploading source maps in release builds; run `npm install-scripts approve @sentry/cli` if you use Sentry source maps |
+| `[@sentry/react-native/expo] Missing config for organization, project` | Sentry plugin has no org/project | A warning only. Ignore it, or set `SENTRY_ORG` and `SENTRY_PROJECT` for release builds |
 | "Network request failed" or "can't reach server" | Wrong API address for where the app runs | Check section 3. Open the health URL in the phone's browser. Restart Metro with `-c` after editing `.env`. |
 | Works in iOS Simulator, fails on Android emulator | `localhost` used on Android | Use `10.0.2.2` |
 | Works on computer browser, fails on phone | Firewall or Wi-Fi isolation | Allow ports 8080, 3000, 8081; use the same Wi-Fi |
