@@ -36,4 +36,5 @@ export function reportError(error: unknown) {
   if (SENTRY_DSN) Sentry.captureException(error);
 }
 
-export const wrapRoot = Sentry.wrap;
+// Only wrap with Sentry when it was initialised; otherwise Sentry logs a warning at start-up.
+export const wrapRoot: typeof Sentry.wrap = SENTRY_DSN ? Sentry.wrap : ((c: unknown) => c) as typeof Sentry.wrap;

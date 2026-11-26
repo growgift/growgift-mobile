@@ -73,8 +73,11 @@ These are public settings and are bundled into the app. **Never put API keys or 
 ## 4. Start the app
 
 ```bash
-npx expo start
+npx expo login      # once: sign in to your Expo account (free at expo.dev)
+npx expo start -c
 ```
+
+Sign in to **the same Expo account** in the Expo Go app on your phone. Expo Go refuses to open a project unless the app and the command line are signed in (see troubleshooting).
 
 Then choose where to run it:
 
@@ -83,6 +86,16 @@ Then choose where to run it:
 - **Real phone:** make sure the phone and computer are on the **same Wi-Fi**. Scan the QR code shown in the terminal. On iPhone use the Camera app; on Android open Expo Go and scan from inside it.
 
 Shake the device (or press `m` in the terminal) for the developer menu. Edits to the code reload automatically.
+
+On the first start Metro says "Bundler cache is empty, rebuilding" and takes about a minute. A good start prints the QR code and `Metro: exp://<your IP>:8081`; once the phone opens the app you will see `iOS Bundled ... (1900+ modules)`.
+
+### Warnings you can ignore
+
+| Message in the terminal | Meaning |
+|---|---|
+| `[@sentry/react-native/expo] Missing config for organization, project` | Crash reporting source-map settings; only matter for release builds |
+| `The package .../expo-router contains an invalid package.json configuration ... router-store.js ... Falling back to file-based resolution` | A packaging quirk in the Expo Router version; Metro falls back and the app still loads |
+| `App Start Span could not be finished. Sentry.wrap was called before Sentry.init` | Fixed in `develop` (Sentry is only wrapped when `EXPO_PUBLIC_SENTRY_DSN` is set). Pull the latest to remove it |
 
 ### Real phone checklist
 - Same Wi-Fi network (some guest or office networks isolate devices, so use a home network or hotspot).
@@ -153,6 +166,7 @@ Business rules shared with the website (gift status wording, trading maths, port
 | "Network request failed" or "can't reach server" | Wrong API address for where the app runs | Check section 3. Open the health URL in the phone's browser. Restart Metro with `-c` after editing `.env`. |
 | Works in iOS Simulator, fails on Android emulator | `localhost` used on Android | Use `10.0.2.2` |
 | Works on computer browser, fails on phone | Firewall or Wi-Fi isolation | Allow ports 8080, 3000, 8081; use the same Wi-Fi |
+| `You need to be signed in to Expo Go and Expo CLI to open your project` (also: `You're signed in to Expo Go as "<name>", but not signed in to Expo CLI`) | Expo Go is signed in but the command line is not (or they use different accounts) | Run `npx expo login` with the same account as Expo Go, then `npx expo start -c` again |
 | QR code scan does nothing in Expo Go | Different network, or Expo Go too old | Same Wi-Fi; update Expo Go; or press `i` / `a` instead |
 | Expo Go says the project needs a different SDK | Expo Go version does not match SDK 58 | Update Expo Go from the store |
 | `npm install` fails with `ERESOLVE` | Missing flag | `npm install --legacy-peer-deps` |
